@@ -1,20 +1,34 @@
 import { TAssessment, TMCQ, TOpen } from "../schemas/common";
 
 function buildMCQs(num: number): TMCQ[] {
-  const base: TMCQ = {
-    id: "1",
-    prompt: "What does REST stand for?",
-    options: [
-      "Representational State Transfer",
-      "Random Event State Transfer",
-      "Representing State Tree",
-      "Remote Execution Sequential Transfer"
-    ],
-    answerKey: 0
-  };
+  const base: TMCQ[] = [
+    {
+      id: "1",
+      prompt: "What does REST stand for?",
+      options: [
+        "Representational State Transfer",
+        "Random Event State Transfer",
+        "Representing State Tree",
+        "Remote Execution Sequential Transfer"
+      ],
+      answerKey: 0
+    },
+    {
+      id: "2",
+      prompt: "Which HTTP method is used to update a resource?",
+      options: ["GET", "POST", "PUT", "DELETE"],
+      answerKey: 2
+    },
+    {
+      id: "3",
+      prompt: "What is the default port for HTTP?",
+      options: ["80", "443", "21", "8080"],
+      answerKey: 0
+    }
+  ];
   const mcqs: TMCQ[] = [];
   for (let i = 0; i < num; i++) {
-    mcqs.push({ ...base, id: String(i + 1) });
+    mcqs.push(base[i % base.length]);
   }
   return mcqs;
 }
