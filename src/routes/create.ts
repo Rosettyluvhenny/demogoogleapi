@@ -1,5 +1,17 @@
-// Map LLM output to schema-compliant assessment
+// Map LLM output (raw Gemini or already-parsed) to schema-compliant assessment
 function mapLLMToSchema(llm: any): any {
+  // If the response is the full Gemini API payload, extract the text then parse
+  if (llm?.candidates) {
+    const text = llm.candidates?.[0]?.content?.parts
+      ?.map((p: any) => p.text ?? "")
+      .join("") ?? "";
+    try {
+      llm = JSON.parse(safeJSONCut(text));
+    } catch {
+      llm = {};
+    }
+  }
+
   const mcqs = (llm.mcqs || []).map((q: any, idx: number) => ({
     id: q.id || String(idx + 1),
     prompt: q.question || q.prompt || '',
@@ -40,7 +52,7 @@ import { CreateTestReq, CreateTestRes } from "../schemas/create";
 import { extractSkills, inferLevel } from "../lib/parse";
 import { generatePrompt } from "../lib/prompts";
 import { llmJSON } from "../providers";
-import { dedupeMCQByPrompt, ensureCoverageDBAPI } from "../lib/utils";
+import { dedupeMCQByPrompt, ensureCoverageDBAPI, safeJSONCut } from "../lib/utils";
 import { Assessment, TAssessment } from "../schemas/common";
 
 type Level = "fresher" | "junior" | "mid" | "senior";
