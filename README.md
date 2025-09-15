@@ -30,4 +30,4 @@ curl -s -X POST http://localhost:3000/test/submit \
   -d '{"testId":"<id-trả-về-từ-create>", "answers": { "mcq":[0,1,2,3,1,2,0], "open":"I would design ..."}}'
 ```
 
-Set `LLM_PROVIDER=gemini` and provide `GEMINI_API_KEY` to use the real API. Otherwise `LLM_PROVIDER=mock` works offline.
+Provide `GEMINI_API_KEY` (or set `LLM_PROVIDER=gemini`) to use the real Gemini API. Without a key the mock provider is used for offline testing.
