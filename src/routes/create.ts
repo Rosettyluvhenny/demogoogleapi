@@ -34,6 +34,7 @@ function mapLLMToSchema(llm: any): any {
 }
 // Route to test LLM integration directly
 
+declare const process: any;
 import { Router } from "express";
 import { randomUUID } from "crypto";
 import { CreateTestReq, CreateTestRes } from "../schemas/create";
@@ -96,6 +97,12 @@ router.post("/test/create", async (req: any, res: any) => {
     }
   }
   if (!data) {
+    if (process.env.LLM_PROVIDER === "gemini" || process.env.GEMINI_API_KEY) {
+      console.error("LLM provider failed after all attempts");
+      return res
+        .status(502)
+        .json({ message: "LLM provider did not return valid data" });
+    }
     console.log("Falling back to mock provider");
     const { llmJSON: mockJSON } = await import("../providers/mock");
     const resp = await mockJSON(prompt);
@@ -172,7 +179,7 @@ router.post("/test/create", async (req: any, res: any) => {
 
 });
 
-router.post("/test/llm", async (req, res) => {
+router.post("/test/llm", async (req: any, res: any) => {
   try {
     const { prompt } = req.body;
     if (!prompt || typeof prompt !== "string") {
